@@ -15,7 +15,7 @@ CREATE TABLE user_achievement (
     created_at timestamptz DEFAULT current_timestamp,
     updated_at timestamptz DEFAULT current_timestamp,
 
-    CONSTRAINT fk_user_achievement_id FOREIGN KEY (user_id) REFERENCES users (id)
+    --CONSTRAINT fk_user_achievement_id FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE UNIQUE INDEX user_achievement_idx ON user_achievement (user_id, achievement_id);
@@ -29,7 +29,8 @@ CREATE TABLE user_achievement_progress (
     created_at timestamptz DEFAULT current_timestamp,
     updated_at timestamptz DEFAULT current_timestamp,
 
-    CONSTRAINT fk_user_achievement_progress_id FOREIGN KEY (user_id) REFERENCES users (id)
+    CONSTRAINT fk_achievement_id FOREIGN KEY (achievement_id) REFERENCES achievement (id)
+    --CONSTRAINT fk_user_achievement_progress_id FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE UNIQUE INDEX user_achievement_progress_idx ON user_achievement_progress (user_id, achievement_id);

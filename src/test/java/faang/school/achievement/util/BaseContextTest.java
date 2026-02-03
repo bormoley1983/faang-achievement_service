@@ -4,14 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redis.testcontainers.RedisContainer;
 import faang.school.achievement.AchievementServiceApp;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -25,7 +23,6 @@ import org.testcontainers.utility.DockerImageName;
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
 @Testcontainers
 @AutoConfigureMockMvc
 public class BaseContextTest {
@@ -37,10 +34,10 @@ public class BaseContextTest {
 
     @Container
     public static PostgreSQLContainer<?> POSTGRESQL_CONTAINER =
-            new PostgreSQLContainer<>("postgres:13.6");
+            new PostgreSQLContainer<>("postgres:18-alpine");
     @Container
     private static final RedisContainer REDIS_CONTAINER =
-            new RedisContainer(DockerImageName.parse("redis/redis-stack:latest"));
+            new RedisContainer(DockerImageName.parse("redis:8-alpine"));
 
     @DynamicPropertySource
     static void postgresqlProperties(DynamicPropertyRegistry registry) {

@@ -1,29 +1,47 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: user
-    password: password
+    url: ${DATABASE_URL:jdbc:postgresql://host.docker.internal:5432/postgres}
+    username: ${DATABASE_USERNAME:user}
+    password: ${DATABASE_PASSWORD:password}
+    hikari:
+      auto-commit: false
+      schema: ${DATABASE_SCHEMA:achievement_service}
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
 
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: ${SHOW_SQL:true}
     properties:
       hibernate:
         format_sql: true
+        default_schema: ${DATABASE_SCHEMA:achievement_service}
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+    default-schema: ${DATABASE_SCHEMA:achievement_service}
+    liquibase-schema: ${DATABASE_SCHEMA:achievement_service}
 
   data:
     redis:
-      port: 6379
-      host: localhost
+      host: ${REDIS_URL:host.docker.internal}
+      port: ${REDIS_PORT:6379}
       channel:
-        achievement: achievement_channel
-        follower: follower_channel
+        achievement: ${REDIS_ACHEIVEMENT_CHANEL:achievement_channel}
+        follower: ${REDIS_FOLLOWER_CHANEL:follower_channel}
+
+springdoc:
+  swagger-ui:
+    enabled:  ${SWAGGERUI_ENABLED:true}
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:true}        
 
 server:
   port: 8085
@@ -31,7 +49,12 @@ server:
 logging:
   level:
     root: info
+    liquibase: info
 
 project-service:
-  host: localhost
-  port: 8082
+  host: ${PROJECT_SERVICE_HOST:http://localhost}
+  port: ${PROJECT_SERVICE_PORT:8082}
+
+user-service:
+  host: ${USER_SERVICE_HOST:http://localhost}
+  port: ${PROJECT_SERVICE_PORT:8089}
