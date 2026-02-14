@@ -13,7 +13,7 @@ CREATE TABLE user_achievement (
     user_id bigint NOT NULL,
     achievement_id bigint NOT NULL,
     created_at timestamptz DEFAULT current_timestamp,
-    updated_at timestamptz DEFAULT current_timestamp,
+    updated_at timestamptz DEFAULT current_timestamp
 
     --CONSTRAINT fk_user_achievement_id FOREIGN KEY (user_id) REFERENCES users (id)
 );
