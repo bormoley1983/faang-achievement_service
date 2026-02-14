@@ -51,3 +51,4 @@ Feign clients:
 * Dockerfile updates?
 * Redis connectivity
 
+**Note:** Base code structure and architecture patterns are based on [FAANG School](https://github.com/faang-school) educational project.
