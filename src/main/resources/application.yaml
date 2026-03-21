@@ -57,4 +57,4 @@ project-service:
 
 user-service:
   host: ${USER_SERVICE_HOST:http://localhost}
-  port: ${PROJECT_SERVICE_PORT:8089}
+  port: ${USER_SERVICE_PORT:8089}
