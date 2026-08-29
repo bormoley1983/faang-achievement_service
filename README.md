@@ -33,14 +33,13 @@ Test config: [src/test/resources/application-test.yaml](src/test/resources/appli
 ## External Integrations
 
 Feign clients:
-- [ProjectServiceClient](src/main/java/faang/school/achievement/client/ProjectServiceClient.java) — integration with project service
+- [UserServiceClient](src/main/java/faang/school/achievement/client/UserServiceClient.java) — validates referenced users
 - Feign configuration: [FeignConfig](src/main/java/faang/school/achievement/client/FeignConfig.java), [FeignUserInterceptor](src/main/java/faang/school/achievement/client/FeignUserInterceptor.java)
 
 ## Suggested Improvements
 
 - Add API endpoint documentation with example requests for key operations
-- Document Redis pub/sub channels usage (`achievement_channel`, `follower_channel`) and their event flows
-- Add docker-compose example for local development with PostgreSQL and Redis
+- Add docker-compose example for local development with PostgreSQL
 - Move database credentials to environment variables in production; currently using defaults for local dev: [src/main/resources/application.yaml](src/main/resources/application.yaml)
 - Document the integration points with external services via Feign clients
 - Add achievement progression algorithms documentation
@@ -49,6 +48,5 @@ Feign clients:
 * JUnit5
 * Parameterized tests
 * Dockerfile updates?
-* Redis connectivity
 
 **Note:** Base code structure and architecture patterns are based on [FAANG School](https://github.com/faang-school) educational project.

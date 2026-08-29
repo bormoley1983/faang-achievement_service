@@ -35,7 +35,6 @@ dependencies {
      */
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
@@ -54,7 +53,6 @@ dependencies {
      */
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
-    implementation("redis.clients:jedis")
 
     /**
      * Utils & Logging
@@ -79,7 +77,6 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers")
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
-    testImplementation("com.redis:testcontainers-redis:2.2.4")
 
     testImplementation("org.assertj:assertj-core")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
