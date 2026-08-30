@@ -27,8 +27,7 @@ docker run -p 8085:8085 achievement-service
 
 ## Configuration
 
-Main config: [src/main/resources/application.yaml](src/main/resources/application.yaml)  
-Test config: [src/test/resources/application-test.yaml](src/test/resources/application-test.yaml)
+Main config: [src/main/resources/application.yaml](src/main/resources/application.yaml)
 
 ## External Integrations
 
@@ -43,10 +42,7 @@ Feign clients:
 - Move database credentials to environment variables in production; currently using defaults for local dev: [src/main/resources/application.yaml](src/main/resources/application.yaml)
 - Document the integration points with external services via Feign clients
 - Add achievement progression algorithms documentation
-- Consider adding CI/CD workflow configuration (GitHub Actions or similar)
-* AssertJ
-* JUnit5
-* Parameterized tests
-* Dockerfile updates?
+- Expand AssertJ, JUnit 5, and parameterized-test coverage for achievement rules.
+- Document the Docker image and runtime health checks.
 
 **Note:** Base code structure and architecture patterns are based on [FAANG School](https://github.com/faang-school) educational project.
