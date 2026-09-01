@@ -84,4 +84,17 @@ class UserHeaderFilterTest {
         verify(chain, never()).doFilter(any(), any());
         verify(userContext, never()).setUserId(any(Long.class));
     }
+
+    @Test
+    void doFilter_whenActuatorRequestHasNoHeader_allowsHealthCheckWithoutUserContext()
+            throws ServletException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/actuator/health/liveness");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        filter.doFilter(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        verify(userContext, never()).setUserId(any(Long.class));
+        verify(userContext, never()).clear();
+    }
 }
