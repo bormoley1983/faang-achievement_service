@@ -14,8 +14,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.Network;
 import org.testcontainers.postgresql.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest(
@@ -25,9 +23,10 @@ import org.testcontainers.utility.DockerImageName;
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
-@Testcontainers
 @AutoConfigureMockMvc
 public class BaseContextTest {
+    private static final boolean CI_INTEGRATION =
+            Boolean.parseBoolean(System.getenv("FAANG_CI_INTEGRATION"));
     @Autowired
     protected MockMvc mockMvc;
 
@@ -36,29 +35,39 @@ public class BaseContextTest {
     
     private static final DockerImageName POSTGRES_IMAGE = DockerImageName.parse("postgres:18-alpine");
 
-    static Network testNetwork = Network.newNetwork();
+    private static final Network TEST_NETWORK;
 
-    @Container
     @SuppressWarnings("resource")
-    protected static final PostgreSQLContainer POSTGRESQL_CONTAINER =
-            new PostgreSQLContainer(POSTGRES_IMAGE)
-                .withNetwork(testNetwork)
-                .withNetworkAliases("test-postgres")		        
-                .withDatabaseName("testdb")
-                .withUsername("test")
-                .withPassword("test")
-                .withReuse(true);
+    protected static final PostgreSQLContainer POSTGRESQL_CONTAINER;
 
     static {
-        POSTGRESQL_CONTAINER.start();
-    }            
+        if (CI_INTEGRATION) {
+            TEST_NETWORK = null;
+            POSTGRESQL_CONTAINER = null;
+        } else {
+            TEST_NETWORK = Network.newNetwork();
+            POSTGRESQL_CONTAINER = new PostgreSQLContainer(POSTGRES_IMAGE)
+                    .withNetwork(TEST_NETWORK)
+                    .withNetworkAliases("test-postgres")
+                    .withDatabaseName("testdb")
+                    .withUsername("test")
+                    .withPassword("test");
+            POSTGRESQL_CONTAINER.start();
+        }
+    }
 
     @DynamicPropertySource
     static void postgresqlProperties(DynamicPropertyRegistry registry) {
 
-        registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
-        registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
+        if (CI_INTEGRATION) {
+            registry.add("spring.datasource.url", () -> requiredEnvironment("FAANG_TEST_POSTGRES_URL"));
+            registry.add("spring.datasource.username", () -> requiredEnvironment("FAANG_TEST_POSTGRES_USER"));
+            registry.add("spring.datasource.password", () -> environment("FAANG_TEST_POSTGRES_PASSWORD", ""));
+        } else {
+            registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
+            registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
+            registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
+        }
         registry.add("spring.datasource.hikari.schema", () -> "public");
         registry.add("spring.jpa.properties.hibernate.default_schema", () -> "public");
         registry.add("spring.liquibase.default-schema", () -> "public");
@@ -71,8 +80,21 @@ public class BaseContextTest {
         if (POSTGRESQL_CONTAINER != null && POSTGRESQL_CONTAINER.isRunning()) {
             POSTGRESQL_CONTAINER.stop();
         }
-        if (testNetwork != null) {
-            testNetwork.close();
+        if (TEST_NETWORK != null) {
+            TEST_NETWORK.close();
         }
+    }
+
+    private static String requiredEnvironment(String name) {
+        String value = System.getenv(name);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException("Missing required CI integration setting: " + name);
+        }
+        return value;
+    }
+
+    private static String environment(String name, String fallback) {
+        String value = System.getenv(name);
+        return value == null ? fallback : value;
     }
 }
